@@ -55,6 +55,9 @@ The full form of an ARM is an advanced reduced instruction set computer (RISC) m
 ## STM 32 CUBE PROGRAM :
 ```
 #include "main.h"
+#include "stdbool.h"
+
+bool button_status;
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
@@ -64,12 +67,22 @@ int main(void)
   HAL_Init();
   SystemClock_Config();
   MX_GPIO_Init();
+
   while (1)
   {
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
-	  HAL_Delay(1000);
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_RESET);
-	  HAL_Delay(1000);
+    button_status = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
+
+    if (button_status == GPIO_PIN_RESET)
+    {
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+      HAL_Delay(1000);
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+      HAL_Delay(1000);
+    }
+    else
+    {
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+    }
   }
 }
 
@@ -78,11 +91,11 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
+  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
 
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -91,11 +104,10 @@ void SystemClock_Config(void)
   }
 
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+                              |RCC_CLOCKTYPE_PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
   {
@@ -106,9 +118,18 @@ void SystemClock_Config(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_RESET);
-  GPIO_InitStruct.Pin = GPIO_PIN_2;
+
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = GPIO_PIN_5;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -123,21 +144,18 @@ void Error_Handler(void)
   }
 }
 
-#ifdef  USE_FULL_ASSERT
-void assert_failed(uint8_t *file, uint32_t line)
-{
-}
-#endif
 ```
 
 
 ## Output  :
- <img width="1919" height="991" alt="image" src="https://github.com/user-attachments/assets/2f34ec68-a673-4912-afa1-8edd9fc62ab7" />
-<img width="1919" height="991" alt="image" src="https://github.com/user-attachments/assets/be6587a0-b689-4415-a406-e210cbb7891d" />
+![WhatsApp Image 2025-09-06 at 08 10 12_cb1c05dd](https://github.com/user-attachments/assets/176120d0-0559-432b-b7ac-6d3ecf6230fd)
+
+![WhatsApp Image 2025-09-06 at 08 10 00_9b28795a](https://github.com/user-attachments/assets/05f203d5-ac15-48d8-8baf-6d3ffef65681)
+
 
 ## layout of the circuit 
  
- <img width="909" height="778" alt="image" src="https://github.com/user-attachments/assets/fcb69fe7-6c19-4d03-b2d3-341a2e62913b" />
+<img width="847" height="780" alt="image" src="https://github.com/user-attachments/assets/cf62057e-2c81-4e6d-a707-83dfa7e4c2a6" />
 
 ## Result :
 Interfacing a digital Input (Pushbutton ) with ARM microcontroller based IOT development is executed and the results are verified.
