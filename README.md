@@ -150,7 +150,7 @@ void Error_Handler(void)
 ## Output  :
 ![WhatsApp Image 2025-09-06 at 08 10 12_cb1c05dd](https://github.com/user-attachments/assets/176120d0-0559-432b-b7ac-6d3ecf6230fd)
 
-![WhatsApp Image 2025-09-06 at 08 10 00_9b28795a](https://github.com/user-attachments/assets/05f203d5-ac15-48d8-8baf-6d3ffef65681)
+![photo](https://github.com/user-attachments/assets/81c04bf8-30e1-4436-86ad-8a1d2c7c0be2)
 
 
 ## layout of the circuit 
